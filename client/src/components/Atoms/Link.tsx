@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { Box, Link as ChakraLink } from '@chakra-ui/core';
 interface linkProps {
   to: string;
+  m?: string;
   mr?: string;
 }
 

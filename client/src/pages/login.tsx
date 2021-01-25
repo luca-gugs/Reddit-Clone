@@ -6,18 +6,21 @@ interface registerProps {}
 
 const Login: React.FC<registerProps> = ({}) => {
   return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
+    <>
       <Nav />
-      <LoginForm />
-    </div>
+      <div
+        style={{
+          height: '90vh',
+          minHeight: '30rem',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <LoginForm />
+      </div>
+    </>
   );
 };
 
