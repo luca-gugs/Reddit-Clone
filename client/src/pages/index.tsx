@@ -1,14 +1,17 @@
-import { Link as ChakraLink, List } from '@chakra-ui/core';
 import React from 'react';
+import { withUrqlClient } from 'next-urql';
 import { Nav } from '../components/Organisms/Nav';
+import { createUrqlClient } from '../utils/createUrqlClient';
+import { usePostsQuery } from '../generated/graphql';
 
 interface indexProps {}
 
 const Index: React.FC<indexProps> = ({}) => {
+  const [{ data }] = usePostsQuery();
   return (
     <div
       style={{
-        // height: '100vh',
+        height: '100vh',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -16,8 +19,13 @@ const Index: React.FC<indexProps> = ({}) => {
       }}
     >
       <Nav />
+      {/* {!data ? (
+        <div>loading...</div>
+      ) : (
+        data.posts.map(p => <div key={p.id}>{p.title}</div>)
+      )} */}
     </div>
   );
 };
 
-export default Index;
+export default withUrqlClient(createUrqlClient, { ssr: true })(Index);

@@ -1,6 +1,8 @@
+import { withUrqlClient } from 'next-urql';
 import React from 'react';
-import { LoginForm } from '../components/Organisms/LoginForm';
+import { LoginForm } from '../components/Organisms/AuthForms/LoginForm';
 import { Nav } from '../components/Organisms/Nav';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 interface registerProps {}
 
@@ -24,4 +26,4 @@ const Login: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default Login;
+export default withUrqlClient(createUrqlClient)(Login);

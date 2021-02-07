@@ -12,6 +12,9 @@ import { MyContext } from '../types';
 import { User } from '../entities/User';
 import argon2 from 'argon2';
 import { EntityManager } from '@mikro-orm/postgresql';
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from '../constants';
+import { sendEmail } from '../utils/sendEmail';
+import { v4 } from 'uuid';
 
 @InputType()
 class HandlePasswordInput {
@@ -72,7 +75,7 @@ export class UserResolver {
         errors: [
           {
             field: 'password',
-            message: 'password must be a minimum of 6 charachters',
+            message: 'uwu ur password must be 6 charachters pls 😇',
           },
         ],
       };
@@ -98,7 +101,7 @@ export class UserResolver {
           errors: [
             {
               field: 'handle',
-              message: 'this handle has already been taken',
+              message: `sory king👑 :/  ths handle has already been taken`,
             },
           ],
         };
@@ -137,5 +140,47 @@ export class UserResolver {
     req.session.userId = user.id;
 
     return { user };
+  }
+
+  //Logout
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    return new Promise(res2 =>
+      req.session.destroy((err: any) => {
+        res.clearCookie(COOKIE_NAME);
+        if (err) {
+          res2(false);
+          return;
+        }
+        res2(true);
+      })
+    );
+  }
+
+  //ForgotPassword
+  @Mutation(() => Boolean || String)
+  async forgotPassword(
+    @Arg('email') email: string,
+    @Ctx() { em, redis }: MyContext
+  ) {
+    const user = await em.findOne(User, { email });
+    if (!user?.id) {
+      return 'no user id found to match';
+    }
+    const token = v4();
+
+    redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      'ex',
+      1000 * 60 * 60 * 24 * 3
+    );
+
+    await sendEmail(
+      email,
+      `<a href="http://localhost:3000/change-password/${token}"> reset password</a>`
+    );
+
+    return true;
   }
 }

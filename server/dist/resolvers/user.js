@@ -28,6 +28,9 @@ exports.UserResolver = void 0;
 const type_graphql_1 = require("type-graphql");
 const User_1 = require("../entities/User");
 const argon2_1 = __importDefault(require("argon2"));
+const constants_1 = require("../constants");
+const sendEmail_1 = require("../utils/sendEmail");
+const uuid_1 = require("uuid");
 let HandlePasswordInput = class HandlePasswordInput {
 };
 __decorate([
@@ -94,26 +97,33 @@ let UserResolver = class UserResolver {
                     errors: [
                         {
                             field: 'password',
-                            message: 'password must be a minimum of 6 charachters',
+                            message: 'uwu ur password must be 6 charachters pls 😇',
                         },
                     ],
                 };
             }
             const hashedPassword = yield argon2_1.default.hash(options.password);
-            const user = em.create(User_1.User, {
-                handle: options.handle,
-                password: hashedPassword,
-            });
+            let user;
             try {
-                yield em.persistAndFlush(user);
+                const result = yield em
+                    .createQueryBuilder(User_1.User)
+                    .getKnexQuery()
+                    .insert({
+                    handle: options.handle,
+                    password: hashedPassword,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                    .returning('*');
+                user = result[0];
             }
             catch (err) {
-                if (err.code === '23505') {
+                if (err.detail.includes('already exists')) {
                     return {
                         errors: [
                             {
                                 field: 'handle',
-                                message: 'this handle has already been taken',
+                                message: `sory king👑 :/  ths handle has already been taken`,
                             },
                         ],
                     };
@@ -143,6 +153,28 @@ let UserResolver = class UserResolver {
             return { user };
         });
     }
+    logout({ req, res }) {
+        return new Promise(res2 => req.session.destroy((err) => {
+            res.clearCookie(constants_1.COOKIE_NAME);
+            if (err) {
+                res2(false);
+                return;
+            }
+            res2(true);
+        }));
+    }
+    forgotPassword(email, { em, redis }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield em.findOne(User_1.User, { email });
+            if (!(user === null || user === void 0 ? void 0 : user.id)) {
+                return 'no user id found to match';
+            }
+            const token = uuid_1.v4();
+            redis.set(constants_1.FORGET_PASSWORD_PREFIX + token, user.id, 'ex', 1000 * 60 * 60 * 24 * 3);
+            yield sendEmail_1.sendEmail(email, `<a href="http://localhost:3000/change-password/${token}"> reset password</a>`);
+            return true;
+        });
+    }
 };
 __decorate([
     type_graphql_1.Query(() => User_1.User, { nullable: true }),
@@ -168,6 +200,21 @@ __decorate([
     __metadata("design:paramtypes", [HandlePasswordInput, Object]),
     __metadata("design:returntype", Promise)
 ], UserResolver.prototype, "login", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean),
+    __param(0, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserResolver.prototype, "logout", null);
+__decorate([
+    type_graphql_1.Mutation(() => Boolean || String),
+    __param(0, type_graphql_1.Arg('email')),
+    __param(1, type_graphql_1.Ctx()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], UserResolver.prototype, "forgotPassword", null);
 UserResolver = __decorate([
     type_graphql_1.Resolver()
 ], UserResolver);

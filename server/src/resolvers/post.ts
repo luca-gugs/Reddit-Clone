@@ -2,12 +2,8 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from 'type-graphql';
 import { Post } from '../entities/Post';
 import { MyContext } from '../types';
 
-//In type
 @Resolver()
 export class PostResolver {
-  //Within a Resolver we can either do querys or mutations
-  //In GraphQL we define what our query returns
-
   //Return All Posts
   @Query(() => [Post])
   posts(@Ctx() ctx: MyContext): Promise<Post[]> {
@@ -35,7 +31,7 @@ export class PostResolver {
   }
 
   //Update Post
-  @Mutation(() => Post, { nullable: true })
+  @Mutation(() => Post, { nullable: false })
   async updatePost(
     @Arg('id') id: number,
     @Arg('title') title: string,

@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from '../Atoms/Link';
-import { useMeQuery } from '../../generated/graphql';
-import { useRouter } from 'next/router';
 import {
-  useDisclosure,
-  RadioGroup,
-  Stack,
-  Radio,
+  Box,
   Button,
   Drawer,
-  DrawerOverlay,
+  DrawerBody,
   DrawerContent,
   DrawerHeader,
-  DrawerBody,
+  DrawerOverlay,
   Flex,
   Heading,
-  Box,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
+  useDisclosure,
 } from '@chakra-ui/core';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useLogoutMutation, useMeQuery } from '../../generated/graphql';
+import { Link } from '../Atoms/Link';
+import { isServer } from '../../utils/isServer';
 
 interface NavProps {}
 
@@ -24,11 +27,14 @@ export const Nav: React.FC<NavProps> = ({}) => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [placement, setPlacement] = useState<any>('top');
-  const [{ data, fetching }] = useMeQuery();
+  const [{ data, fetching }] = useMeQuery({
+    pause: isServer(),
+  });
+  const [{ fetching: fetchingLogout }, logout] = useLogoutMutation();
+
   let body = null;
-  console.log(router, 'router');
-  const hideOnPath =
-    router.asPath === '/login' || router.asPath === '/register';
+  // const hideOnPath =
+  //   router.asPath === '/login' || router.asPath === '/register';
   if (fetching) {
   } else if (!data?.me) {
     body = (
@@ -61,7 +67,50 @@ export const Nav: React.FC<NavProps> = ({}) => {
           mr='auto'
           textAlign='center'
         >
-          {data.me.handle}
+          <Popover>
+            <PopoverTrigger>
+              <Button
+                bg='none'
+                mt='0.5rem'
+                outline='none'
+                height='1rem'
+                _hover={{
+                  bg: 'none',
+                  outline: 'none',
+                }}
+                _active={{
+                  bg: 'none',
+                  outline: 'none',
+                }}
+                _focus={{
+                  bg: 'none',
+                  outline: 'none',
+                }}
+              >
+                {data.me.handle}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              // top='-4rem'
+              _focus={{
+                bg: 'none',
+                outline: 'none',
+              }}
+            >
+              <PopoverHeader>Confirmation!</PopoverHeader>
+              <PopoverBody>
+                <Button
+                  variant='link'
+                  isLoading={fetchingLogout}
+                  onClick={() => {
+                    logout();
+                  }}
+                >
+                  Logout
+                </Button>{' '}
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Box>
       </>
     );

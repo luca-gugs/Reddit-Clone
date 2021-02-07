@@ -8,7 +8,6 @@ interface linkProps {
 }
 
 export const Link: React.FC<linkProps> = ({ to, children, ...props }) => {
-  console.log('test');
   return (
     <Box {...props}>
       <NextLink href={to} as={to}>

@@ -5,8 +5,7 @@ mutation Register($handle: String!, $password: String!) {
       message
     }
     user {
-      id
-      handle
+      ...RegUser
     }
   }
 }

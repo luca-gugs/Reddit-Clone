@@ -1,7 +1,8 @@
 import React from 'react';
-
-import { RegisterForm } from '../components/Organisms/RegisterForm';
+import { RegisterForm } from '../components/Organisms/AuthForms/RegisterForm';
 import { Nav } from '../components/Organisms/Nav';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 interface registerProps {}
 
@@ -25,4 +26,4 @@ const Register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default Register;
+export default withUrqlClient(createUrqlClient)(Register);

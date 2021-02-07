@@ -5,8 +5,7 @@ mutation Login($options: HandlePasswordInput!) {
       message
     }
     user {
-      id
-      handle
+      ...RegUser
     }
   }
 }

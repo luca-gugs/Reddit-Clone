@@ -21,6 +21,10 @@ export class User {
   handle!: string;
 
   @Field()
+  @Property({ type: 'text', unique: true })
+  email?: string;
+
+  @Field()
   @Property({ type: 'text' })
   password!: string;
 }

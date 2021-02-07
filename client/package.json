@@ -22,6 +22,7 @@
     "next": "^9.1.7",
     "next-apollo": "^5.0.0",
     "next-urql": "^1.1.0",
+    "nodemailer": "^6.4.17",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-is": "^16.13.1",
