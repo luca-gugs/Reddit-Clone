@@ -1,60 +1,46 @@
-import { Arg, Ctx, Int, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Post } from '../entities/Post';
-import { MyContext } from '../types';
 
 @Resolver()
 export class PostResolver {
   //Return All Posts
   @Query(() => [Post])
-  posts(@Ctx() ctx: MyContext): Promise<Post[]> {
-    return ctx.em.find(Post, {});
+  async posts(): Promise<Post[]> {
+    return Post.find();
   }
 
   //Return Post By ID
   @Query(() => Post, { nullable: true })
-  post(
-    @Arg('id', () => Int) id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<Post | null> {
-    return em.findOne(Post, { id });
+  post(@Arg('id') id: number): Promise<Post | undefined> {
+    return Post.findOne(id);
   }
 
   //Create Post
   @Mutation(() => Post)
-  async createPost(
-    @Arg('title') title: string,
-    @Ctx() { em }: MyContext
-  ): Promise<Post> {
-    const post = em.create(Post, { title });
-    await em.persistAndFlush(post);
-    return post;
+  async createPost(@Arg('title') title: string): Promise<Post> {
+    return Post.create({ title }).save();
   }
 
   //Update Post
   @Mutation(() => Post, { nullable: false })
   async updatePost(
     @Arg('id') id: number,
-    @Arg('title') title: string,
-    @Ctx() { em }: MyContext
+    @Arg('title') title: string
   ): Promise<Post | null> {
-    const post = await em.findOne(Post, { id });
-
-    if (post && typeof title !== 'undefined') {
-      post.title = title;
-      await em.persistAndFlush(post);
-      return post;
-    } else {
+    const post = await Post.findOne(id);
+    if (!post) {
       return null;
     }
+    if (typeof title !== 'undefined') {
+      await Post.update({ id }, { title });
+    }
+    return post;
   }
 
   //Delete Post
   @Mutation(() => Boolean)
-  async deletePost(
-    @Arg('id') id: number,
-    @Ctx() { em }: MyContext
-  ): Promise<boolean> {
-    await em.nativeDelete(Post, { id });
+  async deletePost(@Arg('id') id: number): Promise<boolean> {
+    await Post.delete(id);
     return true;
   }
 }

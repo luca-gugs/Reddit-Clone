@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, Button, Heading } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading } from '@chakra-ui/core';
 import { Formik, Form } from 'formik';
 import { useRouter } from 'next/router';
 import { useRegisterMutation } from '../../../generated/graphql';
 import { toErrorMap } from '../../../utils/toErrorMap';
 import { InputField } from '../../Atoms/InputField';
 import { Wrapper } from '../../Atoms/Wrapper';
+import { Link } from '../../Atoms/Link';
 
 interface RegisterFormProps {}
 
@@ -21,6 +22,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
         initialValues={{ handle: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
           const response = await register(values);
+          console.log(response);
           if (response.data?.register.user) {
             router.push('/');
           } else if (response.data?.register.errors) {
@@ -45,9 +47,12 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
                 type='password'
               />
             </Box>
-            <Button type='submit' mt={8} isLoading={isSubmitting}>
-              Register
-            </Button>
+            <Flex mt={8} justifyContent='space-between' alignItems='flex-end'>
+              <Button type='submit' isLoading={isSubmitting}>
+                Register
+              </Button>
+              <Link to='/login'>Login</Link>
+            </Flex>
           </Form>
         )}
       </Formik>

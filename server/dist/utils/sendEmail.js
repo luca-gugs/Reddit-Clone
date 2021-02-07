@@ -15,6 +15,7 @@ function sendEmail(to, html) {
     return __awaiter(this, void 0, void 0, function* () {
         console.log('EMAIL: ', process.env.NODEMAILER_EMAIL);
         let transporter = nodemailer.createTransport({
+            name: 'example.com',
             host: 'smtp.ethereal.email',
             port: 587,
             secure: false,
@@ -30,6 +31,7 @@ function sendEmail(to, html) {
             html,
         });
         console.log('Message sent: %s', info.messageId);
+        console.log('Info: ', info);
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     });
 }

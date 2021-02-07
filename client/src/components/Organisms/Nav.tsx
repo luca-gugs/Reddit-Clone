@@ -50,7 +50,7 @@ export const Nav: React.FC<NavProps> = ({}) => {
           <Link m='0 0.5rem' to='/login'>
             Login
           </Link>
-          <Link m='0 0.5rem' to='/login'>
+          <Link m='0 0.5rem' to='/register'>
             Register
           </Link>
         </Flex>

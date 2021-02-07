@@ -7,6 +7,7 @@ export async function sendEmail(to: string, html: string) {
   // Only needed if you don't have a real mail account for testing
   console.log('EMAIL: ', process.env.NODEMAILER_EMAIL);
   let transporter = nodemailer.createTransport({
+    name: 'example.com',
     host: 'smtp.ethereal.email',
     port: 587,
     secure: false,
@@ -24,6 +25,6 @@ export async function sendEmail(to: string, html: string) {
   });
 
   console.log('Message sent: %s', info.messageId);
-
+  console.log('Info: ', info);
   console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 }
