@@ -1,13 +1,18 @@
-import React from 'react';
 import { withUrqlClient } from 'next-urql';
+import React from 'react';
+import { CreatePostCollapse } from '../components/Organisms/CreatePostCollapse';
 import { Nav } from '../components/Organisms/Nav';
-import { createUrqlClient } from '../utils/createUrqlClient';
 import { usePostsQuery } from '../generated/graphql';
+import { createUrqlClient } from '../utils/createUrqlClient';
+import { TopicCard } from '../components/Organisms/TopicCards';
+import { Box, Flex } from '@chakra-ui/core';
 
 interface indexProps {}
 
 const Index: React.FC<indexProps> = ({}) => {
   const [{ data }] = usePostsQuery();
+  console.log(data?.posts, 'data');
+
   return (
     <div
       style={{
@@ -15,15 +20,24 @@ const Index: React.FC<indexProps> = ({}) => {
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
       }}
     >
       <Nav />
-      {/* {!data ? (
-        <div>loading...</div>
-      ) : (
-        data.posts.map(p => <div key={p.id}>{p.title}</div>)
-      )} */}
+      <CreatePostCollapse />
+      <Flex w='100%' p='0 4rem' flexWrap='wrap'>
+        {data
+          ? data.posts.map(elm => {
+              return (
+                <TopicCard
+                  key={elm.id}
+                  title={elm.title}
+                  text={elm.text}
+                  id={elm.id}
+                />
+              );
+            })
+          : null}
+      </Flex>
     </div>
   );
 };

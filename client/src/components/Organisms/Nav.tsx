@@ -8,6 +8,12 @@ import {
   DrawerOverlay,
   Flex,
   Heading,
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuGroup,
+  MenuItem,
+  MenuList,
   Popover,
   PopoverBody,
   PopoverContent,
@@ -33,29 +39,14 @@ export const Nav: React.FC<NavProps> = ({}) => {
   const [{ fetching: fetchingLogout }, logout] = useLogoutMutation();
 
   let body = null;
-  // const hideOnPath =
-  //   router.asPath === '/login' || router.asPath === '/register';
+  const hideOnPath =
+    router.asPath === '/login' || router.asPath === '/register';
+  if (data?.me && hideOnPath) {
+    router.push('/');
+  }
   if (fetching) {
   } else if (!data?.me) {
-    body = (
-      <>
-        <Flex
-          position='absolute'
-          left='0'
-          right='0'
-          ml='auto'
-          mr='auto'
-          justifyContent='center'
-        >
-          <Link m='0 0.5rem' to='/login'>
-            Login
-          </Link>
-          <Link m='0 0.5rem' to='/register'>
-            Register
-          </Link>
-        </Flex>
-      </>
-    );
+    body = null;
   } else {
     body = (
       <>
@@ -67,50 +58,7 @@ export const Nav: React.FC<NavProps> = ({}) => {
           mr='auto'
           textAlign='center'
         >
-          <Popover>
-            <PopoverTrigger>
-              <Button
-                bg='none'
-                mt='0.5rem'
-                outline='none'
-                height='1rem'
-                _hover={{
-                  bg: 'none',
-                  outline: 'none',
-                }}
-                _active={{
-                  bg: 'none',
-                  outline: 'none',
-                }}
-                _focus={{
-                  bg: 'none',
-                  outline: 'none',
-                }}
-              >
-                {data.me.handle}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent
-              // top='-4rem'
-              _focus={{
-                bg: 'none',
-                outline: 'none',
-              }}
-            >
-              <PopoverHeader>Confirmation!</PopoverHeader>
-              <PopoverBody>
-                <Button
-                  variant='link'
-                  isLoading={fetchingLogout}
-                  onClick={() => {
-                    logout();
-                  }}
-                >
-                  Logout
-                </Button>{' '}
-              </PopoverBody>
-            </PopoverContent>
-          </Popover>
+          <Link to={`/user/${data.me.id}`}>{data.me.handle}</Link>
         </Box>
       </>
     );
@@ -119,44 +67,61 @@ export const Nav: React.FC<NavProps> = ({}) => {
   return (
     <>
       <Flex w='100%' mt='2' position='relative' alignItems='center'>
-        <Heading pl='4'>CAC</Heading>
+        <Heading pl='8'>CAC</Heading>
         {body}
       </Flex>
-      <Button
-        position='absolute'
-        bottom='2rem'
-        left='2rem'
-        zIndex={999}
-        variantColor='blue'
-        onClick={onOpen}
-      >
-        Menu
-      </Button>
-      <Drawer placement={placement} onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay>
-          <DrawerContent>
-            <Flex justifyContent='space-between' alignItems='center'>
-              <DrawerHeader border='none' borderBottomWidth='1px'>
-                CAC
-              </DrawerHeader>
-              <Flex>
-                <Link mr='1rem' to='/login'>
-                  Login
-                </Link>
-                <Link mr='1rem' to='/register'>
-                  Register
-                </Link>
-              </Flex>
-            </Flex>
-
-            <DrawerBody borderTop='0.25px solid #cecece'>
-              <p>Some contents...</p>
-              <p>Some contents...</p>
-              <p>Some contents...</p>
-            </DrawerBody>
-          </DrawerContent>
-        </DrawerOverlay>
-      </Drawer>
+      <Menu>
+        <MenuButton
+          position='absolute'
+          bottom='2rem'
+          left='2rem'
+          zIndex={999}
+          // @ts-ignore: variantColor is borking out for no reason
+          variantColor='blue'
+          onClick={onOpen}
+          as={Button}
+        >
+          Menu
+        </MenuButton>
+        <MenuList placement='top-start'>
+          <Link to='/'>
+            <MenuItem>Root</MenuItem>
+          </Link>
+          <MenuGroup title={data?.me ? data.me.handle : 'Profile'}>
+            {!data?.me ? (
+              <>
+                <>
+                  <Link to='/login'>
+                    <MenuItem>Login</MenuItem>
+                  </Link>
+                  <Link to='/register'>
+                    <MenuItem>Register</MenuItem>
+                  </Link>
+                </>
+              </>
+            ) : (
+              <>
+                <MenuItem>My Account</MenuItem>
+              </>
+            )}
+          </MenuGroup>
+          <MenuDivider />
+          <MenuGroup title='Help'>
+            {data?.me && (
+              <MenuItem
+                onClick={() => {
+                  logout();
+                }}
+              >
+                Logout
+              </MenuItem>
+            )}
+            <Link to='/faq'>
+              <MenuItem>FAQ</MenuItem>
+            </Link>
+          </MenuGroup>
+        </MenuList>
+      </Menu>
     </>
   );
 };

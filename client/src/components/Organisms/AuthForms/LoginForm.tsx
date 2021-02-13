@@ -13,6 +13,7 @@ interface RegisterFormProps {}
 export const LoginForm: React.FC<RegisterFormProps> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
+
   return (
     <Wrapper variant='small'>
       <Heading as='h2' size='xl'>
