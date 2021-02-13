@@ -13,7 +13,8 @@ interface RegisterFormProps {}
 export const LoginForm: React.FC<RegisterFormProps> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
-
+  let altRedirect = router.query.next || null;
+  console.log(altRedirect);
   return (
     <Wrapper variant='small'>
       <Heading as='h2' size='xl'>
@@ -24,7 +25,12 @@ export const LoginForm: React.FC<RegisterFormProps> = ({}) => {
         onSubmit={async (values, { setErrors }) => {
           const response = await login({ options: values });
           if (response.data?.login.user) {
-            router.push('/');
+            // router.push('/');
+            if (altRedirect) {
+              router.push(`${altRedirect}`);
+            } else {
+              router.push('/');
+            }
           } else if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           }

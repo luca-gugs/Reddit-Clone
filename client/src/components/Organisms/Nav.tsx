@@ -1,11 +1,6 @@
 import {
   Box,
   Button,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-  DrawerOverlay,
   Flex,
   Heading,
   Menu,
@@ -14,29 +9,23 @@ import {
   MenuGroup,
   MenuItem,
   MenuList,
-  Popover,
-  PopoverBody,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
   useDisclosure,
 } from '@chakra-ui/core';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useLogoutMutation, useMeQuery } from '../../generated/graphql';
-import { Link } from '../Atoms/Link';
 import { isServer } from '../../utils/isServer';
+import { Link } from '../Atoms/Link';
 
 interface NavProps {}
 
 export const Nav: React.FC<NavProps> = ({}) => {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [placement, setPlacement] = useState<any>('top');
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),
   });
-  const [{ fetching: fetchingLogout }, logout] = useLogoutMutation();
+  const [, logout] = useLogoutMutation();
 
   let body = null;
   const hideOnPath =
@@ -66,13 +55,20 @@ export const Nav: React.FC<NavProps> = ({}) => {
 
   return (
     <>
-      <Flex w='100%' mt='2' position='relative' alignItems='center'>
+      <Flex
+        w='100%'
+        position='sticky'
+        top='0'
+        alignItems='center'
+        zIndex={999}
+        backgroundColor='rgba(255,255,255,0.5)'
+      >
         <Heading pl='8'>CAC</Heading>
         {body}
       </Flex>
       <Menu>
         <MenuButton
-          position='absolute'
+          position='fixed'
           bottom='2rem'
           left='2rem'
           zIndex={999}

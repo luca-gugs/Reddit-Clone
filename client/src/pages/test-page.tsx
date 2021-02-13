@@ -1,15 +1,13 @@
-import { withUrqlClient } from 'next-urql';
-// import { random } from '../public/static/random.png';
-import { useRouter } from 'next/router';
 import React from 'react';
-import { LoginForm } from '../components/Organisms/AuthForms/LoginForm';
+import { RegisterForm } from '../components/Organisms/AuthForms/RegisterForm';
 import { Nav } from '../components/Organisms/Nav';
+import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
-interface registerProps {}
+import { CreatePostCollapse } from '../components/Organisms/CreatePostCollapse';
 
-const Login: React.FC<registerProps> = ({}) => {
-  const router = useRouter();
-  console.log(router, 'router');
+interface testProps {}
+
+const Test: React.FC<testProps> = ({}) => {
   return (
     <>
       <Nav />
@@ -23,10 +21,11 @@ const Login: React.FC<registerProps> = ({}) => {
           alignItems: 'center',
         }}
       >
-        <LoginForm />
+        <h2>Test Page</h2>
+        <CreatePostCollapse />
       </div>
     </>
   );
 };
 
-export default withUrqlClient(createUrqlClient)(Login);
+export default withUrqlClient(createUrqlClient)(Test);

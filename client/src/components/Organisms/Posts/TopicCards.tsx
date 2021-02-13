@@ -1,7 +1,8 @@
 import { Box, Badge } from '@chakra-ui/core';
-import { Image } from '@chakra-ui/react';
+import { ChevronRightIcon } from '@chakra-ui/icons';
 
 import React from 'react';
+import { Link } from '../../Atoms/Link';
 interface topicCardProps {
   title: string;
   text: string;
@@ -16,8 +17,8 @@ export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
       h='fit-content'
       minH='170px'
       mt={4}
-      mr={4}
-      ml={4}
+      mr={2}
+      ml={2}
       borderWidth='1px'
       borderRadius='lg'
       overflow='hidden'
@@ -51,7 +52,17 @@ export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
       >
         #{id}
       </Box>
-      <img src='/expandCardIcon.png' />
+      <Link to='/post/id'>
+        <ChevronRightIcon
+          position='absolute'
+          right='0.5'
+          top='1'
+          w={6}
+          h={6}
+          transition='transform 0.3s'
+          _hover={{ transform: 'scale(1.5)', cursor: 'pointer' }}
+        />
+      </Link>
     </Box>
   );
 };

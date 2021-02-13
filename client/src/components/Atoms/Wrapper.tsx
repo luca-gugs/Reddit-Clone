@@ -25,7 +25,7 @@ export const Wrapper: React.FC<WrapperProps> = ({
       maxW={variant === 'large' ? large : variant === 'xl' ? xl : small}
       mx='auto'
       w='100%'
-      mb={12}
+      mb={6}
     >
       {children}
     </Box>

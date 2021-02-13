@@ -1,28 +1,24 @@
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  Button,
-  Collapse,
-  Flex,
-  Textarea,
-} from '@chakra-ui/core';
+import { Box, Button, Collapse, Flex } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
-import {
-  useChangePasswordMutation,
-  useCreatePostMutation,
-} from '../../generated/graphql';
+import React from 'react';
+import { useCreatePostMutation, useMeQuery } from '../../generated/graphql';
+import { isServer } from '../../utils/isServer';
 import { InputField } from '../Atoms/InputField';
+import { Link } from '../Atoms/Link';
 import { Wrapper } from '../Atoms/Wrapper';
-
 interface CreatePostCollapseProps {}
 
 export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
+  const router = useRouter();
   const [show, setShow] = React.useState(false);
   const [, createPost] = useCreatePostMutation();
+  const [{ data, fetching }] = useMeQuery({
+    pause: isServer(),
+  });
+
   const handleToggle = () => setShow(!show);
+
   return (
     <Box width='50%' mt={8}>
       <Wrapper variant='xl'>
@@ -33,7 +29,12 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
           <Formik
             initialValues={{ title: '', text: '' }}
             onSubmit={async (values, { setErrors }) => {
-              await createPost({ input: values });
+              const { error } = await createPost({ input: values });
+              if (error) {
+                router.push('/login');
+              } else {
+                setShow(false);
+              }
             }}
           >
             {({ isSubmitting }) => (
@@ -55,9 +56,22 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
                   justifyContent='space-between'
                   alignItems='flex-end'
                 >
-                  <Button type='submit' isLoading={isSubmitting}>
-                    Post
-                  </Button>
+                  {data?.me ? (
+                    <Button type='submit' isLoading={isSubmitting}>
+                      Post
+                    </Button>
+                  ) : (
+                    <Flex>
+                      To create a topic
+                      <Link m='0 0.5rem' to={'/login?next=' + router.pathname}>
+                        Login
+                      </Link>
+                      or
+                      <Link m='0 0.5rem' to='/register'>
+                        Register
+                      </Link>
+                    </Flex>
+                  )}
                 </Flex>
               </Form>
             )}
