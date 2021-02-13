@@ -27,7 +27,6 @@ export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
         <Box d='flex' alignItems='baseline'></Box>
 
         <Box mt='1' fontWeight='semibold' as='h4' lineHeight='tight'>
-          {/* {property.title} */}
           {title}
         </Box>
 
