@@ -1,22 +1,13 @@
-export const splitToChunks: any = (array: [], parts: number) => {
-  let result = [];
-  let init = Math.floor(array.length / parts);
-  console.log(init);
-  let count = [0, init];
-  for (let i = parts; i > 0; i--) {
-    console.log(i, 'parst');
-    result.push(
-      array.slice(
-        count[count.length - 2],
-        count[
-          count[count.length - 1] <= array.length
-            ? count.length - 1
-            : array.length
-        ]
-      )
-    );
-    count.push(count[count.length - 1] + init);
+import { Post } from '../generated/graphql';
+
+export const splitToChunks: any = (flatArray: [], numCols: number) => {
+  const newArray = [];
+  for (let c = 0; c < numCols; c++) {
+    newArray.push([]);
   }
-  console.log(count, 'count');
-  return result;
+  for (let i = 0; i < flatArray.length; i++) {
+    const mod = i % numCols;
+    newArray[mod].push(flatArray[i]);
+  }
+  return newArray;
 };

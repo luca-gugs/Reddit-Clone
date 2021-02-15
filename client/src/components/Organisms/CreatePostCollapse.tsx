@@ -1,5 +1,12 @@
-import { Box, Button, Collapse, Flex } from '@chakra-ui/core';
-import { Form, Formik } from 'formik';
+import {
+  Box,
+  Button,
+  Collapse,
+  Flex,
+  Checkbox,
+  FormLabel,
+} from '@chakra-ui/core';
+import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useCreatePostMutation, useMeQuery } from '../../generated/graphql';
@@ -27,7 +34,7 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
         </Button>
         <Collapse isOpen={show}>
           <Formik
-            initialValues={{ title: '', text: '' }}
+            initialValues={{ title: '', text: '', anon: false }}
             onSubmit={async (values, { setErrors }) => {
               const { error } = await createPost({ input: values });
               if (error) {
@@ -57,9 +64,23 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
                   alignItems='flex-end'
                 >
                   {data?.me ? (
-                    <Button type='submit' isLoading={isSubmitting}>
-                      Post
-                    </Button>
+                    <Flex
+                      w='100%'
+                      justifyContent='space-between'
+                      alignItems='center'
+                    >
+                      <Button type='submit' isLoading={isSubmitting}>
+                        Post
+                      </Button>
+                      <FormLabel htmlFor='anon' padding='0 '>
+                        <Field
+                          type='checkbox'
+                          name='anon'
+                          style={{ marginRight: '0.5rem' }}
+                        />
+                        Post as Anon
+                      </FormLabel>
+                    </Flex>
                   ) : (
                     <Flex>
                       To create a topic

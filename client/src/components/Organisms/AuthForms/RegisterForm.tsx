@@ -22,7 +22,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
         initialValues={{ handle: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
           const response = await register(values);
-          console.log(response);
           if (response.data?.register.user) {
             router.push('/');
           } else if (response.data?.register.errors) {

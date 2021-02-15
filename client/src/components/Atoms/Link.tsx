@@ -5,13 +5,21 @@ interface linkProps {
   to: string;
   m?: string;
   mr?: string;
+  underline?: string;
 }
 
-export const Link: React.FC<linkProps> = ({ to, children, ...props }) => {
+export const Link: React.FC<linkProps> = ({
+  to,
+  underline = 'none',
+  children,
+  ...props
+}) => {
   return (
     <Box {...props}>
       <NextLink href={to} as={to}>
-        <ChakraLink>{children}</ChakraLink>
+        <ChakraLink style={{ textDecoration: underline }}>
+          {children}
+        </ChakraLink>
       </NextLink>
     </Box>
   );

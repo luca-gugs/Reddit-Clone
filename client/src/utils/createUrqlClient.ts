@@ -1,5 +1,10 @@
-import { cacheExchange } from '@urql/exchange-graphcache';
-import { dedupExchange, Exchange, fetchExchange } from 'urql';
+import { cacheExchange, Resolver } from '@urql/exchange-graphcache';
+import {
+  dedupExchange,
+  Exchange,
+  fetchExchange,
+  stringifyVariables,
+} from 'urql';
 import { pipe, tap } from 'wonka';
 import {
   ChangePasswordMutation,
@@ -23,6 +28,47 @@ const errorExchange: Exchange = ({ forward }) => ops$ => {
   );
 };
 
+export const cursorPagination = (): Resolver => {
+  return (_parent, fieldArgs, cache, info) => {
+    const { parentKey: entityKey, fieldName } = info;
+    const allFields = cache.inspectFields(entityKey);
+    const fieldInfos = allFields.filter(info => info.fieldName === fieldName);
+    const size = fieldInfos.length;
+    if (size === 0) {
+      return undefined;
+    }
+
+    const fieldKey = `${fieldName}(${stringifyVariables(fieldArgs)})`;
+    const isItInTheCache = cache.resolve(
+      cache.resolveFieldByKey(entityKey, fieldKey) as string,
+      'posts'
+    );
+    info.partial = !isItInTheCache;
+    let hasMore = true;
+    const results: string[] = [];
+    fieldInfos.forEach(fi => {
+      const key = cache.resolveFieldByKey(entityKey, fi.fieldKey) as string;
+      const data = cache.resolve(key, 'posts') as string[];
+      const _hasMore = cache.resolve(key, 'hasMore');
+      if (!_hasMore) {
+        hasMore = _hasMore as boolean;
+      }
+      results.push(...data);
+    });
+
+    const obj = {
+      hasMore: hasMore,
+      posts: results,
+    };
+
+    return {
+      __typename: 'PaginatedPosts',
+      hasMore: hasMore,
+      posts: results,
+    };
+  };
+};
+
 export const createUrqlClient = (ssrExchange: any) => ({
   url: 'http://localhost:4000/graphql',
   fetchOptions: {
@@ -31,6 +77,14 @@ export const createUrqlClient = (ssrExchange: any) => ({
   exchanges: [
     dedupExchange,
     cacheExchange({
+      keys: {
+        PaginatedPosts: () => null,
+      },
+      resolvers: {
+        Query: {
+          posts: cursorPagination(),
+        },
+      },
       updates: {
         Mutation: {
           logout: (_result, args, cache, info) => {
@@ -57,22 +111,15 @@ export const createUrqlClient = (ssrExchange: any) => ({
               }
             );
           },
-          // createPost: (_result, args, cache, info) => {
-          //   betterUpdateQuery<CreatePostMutation, PostsQuery>(
-          //     cache,
-          //     { query: PostsDocument },
-          //     _result,
-          //     (result, query) => {
-          //       if (result.createPost) {
-          //         return query;
-          //       } else {
-          //         return {
-          //           me: result.createPost,
-          //         };
-          //       }
-          //     }
-          //   );
-          // },
+          createPost: (_result, args, cache, info) => {
+            const allFields = cache.inspectFields('Query');
+            const fieldInfos = allFields.filter(
+              info => info.fieldName === 'posts'
+            );
+            fieldInfos.forEach(fi => {
+              cache.invalidate('Query', 'posts', fi.arguments || {});
+            });
+          },
           changePassword: (_result, args, cache, info) => {
             betterUpdateQuery<ChangePasswordMutation, MeQuery>(
               cache,

@@ -1,4 +1,4 @@
-import { Box, Badge } from '@chakra-ui/core';
+import { Box, Badge, PseudoBox, Text } from '@chakra-ui/core';
 import { ChevronRightIcon } from '@chakra-ui/icons';
 
 import React from 'react';
@@ -7,11 +7,19 @@ interface topicCardProps {
   title: string;
   text: string;
   id: number;
+  anon: boolean | null;
+  creator: { handle: string; id: number };
 }
 
-export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
+export const TopicCard: React.FC<topicCardProps> = ({
+  title,
+  text,
+  id,
+  anon,
+  creator,
+}) => {
   return (
-    <Box
+    <PseudoBox
       pos='relative'
       w='275px'
       h='fit-content'
@@ -22,7 +30,17 @@ export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
       borderWidth='1px'
       borderRadius='lg'
       overflow='hidden'
+      _hover={{
+        shadow: 'md',
+        transition: 'box-shadow 0.3s',
+        cursor: 'pointer',
+      }}
     >
+      <PseudoBox position='absolute' left='2' top='1'>
+        <Link underline='' to={`/user/${creator.id}`}>
+          <Text fontSize='xs'>{anon ? '@anon' : creator.handle}</Text>
+        </Link>
+      </PseudoBox>
       <Box p='6'>
         <Box d='flex' alignItems='baseline'></Box>
 
@@ -31,10 +49,7 @@ export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
         </Box>
 
         <Box>
-          {text}
-          <Box as='span' color='gray.600' fontSize='sm'>
-            / wk
-          </Box>
+          {text.slice(0, 250)} {text.length > 250 && '...'}
         </Box>
       </Box>
       <Box
@@ -62,6 +77,6 @@ export const TopicCard: React.FC<topicCardProps> = ({ title, text, id }) => {
           _hover={{ transform: 'scale(1.5)', cursor: 'pointer' }}
         />
       </Link>
-    </Box>
+    </PseudoBox>
   );
 };

@@ -4,11 +4,13 @@ import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import Redis from 'ioredis';
+import path from 'path';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
 import { COOKIE_NAME } from './constants';
 import { Post } from './entities/Post';
+import { Updoot } from './entities/Updoot';
 import { User } from './entities/User';
 import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
@@ -16,18 +18,18 @@ import { UserResolver } from './resolvers/user';
 require('dotenv').config();
 
 const main = async () => {
-  await createConnection({
+  const conn = await createConnection({
     type: 'postgres',
     database: 'postgres',
     username: 'postgres',
     password: 'postgres',
     logging: true,
     synchronize: true,
-    entities: [Post, User],
+    migrations: [path.join(__dirname, './migrations/*')],
+    entities: [Post, User, Updoot],
   });
-
-  // const orm = await MikroORM.init(microConfig);
-  // await orm.getMigrator().up();
+  await conn.runMigrations();
+  // await Post.delete({});
 
   const app = express();
 

@@ -9,7 +9,6 @@ interface registerProps {}
 
 const Login: React.FC<registerProps> = ({}) => {
   const router = useRouter();
-  console.log(router, 'router');
   return (
     <>
       <Nav />

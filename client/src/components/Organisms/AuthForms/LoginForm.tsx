@@ -14,7 +14,6 @@ export const LoginForm: React.FC<RegisterFormProps> = ({}) => {
   const router = useRouter();
   const [, login] = useLoginMutation();
   let altRedirect = router.query.next || null;
-  console.log(altRedirect);
   return (
     <Wrapper variant='small'>
       <Heading as='h2' size='xl'>
