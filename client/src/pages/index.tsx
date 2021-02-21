@@ -14,12 +14,13 @@ interface indexProps {}
 const Index: React.FC<indexProps> = ({}) => {
   const { width, height } = useWindowSize();
   const [variables, setVariables] = useState({
-    limit: 12,
+    limit: 16,
     cursor: null as null | string,
   });
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
+
   const [postData, setPostData] = useState([]);
 
   useEffect(() => {

@@ -12,9 +12,11 @@ import { COOKIE_NAME } from './constants';
 import { Post } from './entities/Post';
 import { Updoot } from './entities/Updoot';
 import { User } from './entities/User';
+import { Comment } from './entities/Comment';
 import { HelloResolver } from './resolvers/hello';
 import { PostResolver } from './resolvers/post';
 import { UserResolver } from './resolvers/user';
+import { CommentResolver } from './resolvers/comment';
 require('dotenv').config();
 
 const main = async () => {
@@ -26,7 +28,7 @@ const main = async () => {
     logging: true,
     synchronize: true,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [Post, User, Updoot],
+    entities: [Post, User, Updoot, Comment],
   });
   await conn.runMigrations();
   // await Post.delete({});
@@ -67,7 +69,7 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver],
+      resolvers: [HelloResolver, PostResolver, UserResolver, CommentResolver],
       validate: false,
     }),
     //Context is a special object accessible to all resolvers

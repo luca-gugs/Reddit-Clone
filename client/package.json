@@ -25,6 +25,7 @@
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
     "isomorphic-unfetch": "^3.0.0",
+    "javascript-time-ago": "^2.3.4",
     "next": "^9.1.7",
     "next-apollo": "^5.0.0",
     "next-urql": "^1.1.0",
@@ -42,6 +43,7 @@
     "@graphql-codegen/typescript": "1.17.7",
     "@graphql-codegen/typescript-operations": "1.17.7",
     "@graphql-codegen/typescript-urql": "^2.0.0",
+    "@types/javascript-time-ago": "^2.0.2",
     "@types/node": "^14.0.27",
     "@types/react-slick": "^0.23.4",
     "typescript": "^3.9.7"

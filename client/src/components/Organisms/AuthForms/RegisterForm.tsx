@@ -7,10 +7,12 @@ import { toErrorMap } from '../../../utils/toErrorMap';
 import { InputField } from '../../Atoms/InputField';
 import { Wrapper } from '../../Atoms/Wrapper';
 import { Link } from '../../Atoms/Link';
+import { useToast } from '@chakra-ui/core';
 
 interface RegisterFormProps {}
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
+  const toast = useToast();
   const router = useRouter();
   const [, register] = useRegisterMutation();
   return (
@@ -24,6 +26,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({}) => {
           const response = await register(values);
           if (response.data?.register.user) {
             router.push('/');
+            toast({
+              position: 'bottom-left',
+              title: 'Account created.',
+              description: "We've created your account for you.",
+              status: 'success',
+              duration: 9000,
+              isClosable: true,
+            });
           } else if (response.data?.register.errors) {
             setErrors(toErrorMap(response.data.register.errors));
           }

@@ -5,6 +5,7 @@ import {
   Flex,
   Checkbox,
   FormLabel,
+  useToast,
 } from '@chakra-ui/core';
 import { Field, Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
@@ -18,6 +19,7 @@ interface CreatePostCollapseProps {}
 
 export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
   const router = useRouter();
+  const toast = useToast();
   const [show, setShow] = React.useState(false);
   const [, createPost] = useCreatePostMutation();
   const [{ data, fetching }] = useMeQuery({
@@ -41,6 +43,13 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
                 router.push('/login');
               } else {
                 setShow(false);
+                toast({
+                  position: 'bottom-left',
+                  title: 'Post Uploaded',
+                  status: 'success',
+                  duration: 9000,
+                  isClosable: true,
+                });
               }
             }}
           >

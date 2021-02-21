@@ -18,6 +18,8 @@ export const ChunkedPosts: React.FC<chunkedPostsProps> = ({ posts }) => {
               text: string;
               anon: boolean | null;
               creator: { handle: string; id: number };
+              points: number;
+              voteStatus: number | null;
             }) => {
               return (
                 <TopicCard
@@ -27,6 +29,8 @@ export const ChunkedPosts: React.FC<chunkedPostsProps> = ({ posts }) => {
                   id={elm.id}
                   anon={elm?.anon}
                   creator={elm.creator}
+                  points={elm.points}
+                  voteStatus={elm.voteStatus}
                 />
               );
             }

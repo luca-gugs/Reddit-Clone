@@ -13,6 +13,8 @@ query Posts($limit: Int!, $cursor: String) {
       createdAt
       updatedAt
       anon
+      points
+      voteStatus
     }
   }
 }

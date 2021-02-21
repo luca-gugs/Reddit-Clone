@@ -1,25 +1,16 @@
-import { Box, Button, Flex, Heading } from '@chakra-ui/core';
-import {
-  Menu,
-  MenuButton,
-  MenuDivider,
-  MenuGroup,
-  MenuItem,
-  MenuList,
-} from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Box, Button, Flex, Heading, useToast } from '@chakra-ui/core';
+import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useLogoutMutation, useMeQuery } from '../../generated/graphql';
 import { isServer } from '../../utils/isServer';
 import { Link } from '../Atoms/Link';
-import { chakra } from '@chakra-ui/react';
 
 interface NavProps {}
 
 export const Nav: React.FC<NavProps> = ({}) => {
   const router = useRouter();
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),
   });
@@ -48,7 +39,7 @@ export const Nav: React.FC<NavProps> = ({}) => {
     <>
       <Flex
         w='100%'
-        h='7rem'
+        h='4rem'
         position='sticky'
         top='0'
         alignItems='center'
@@ -94,6 +85,14 @@ export const Nav: React.FC<NavProps> = ({}) => {
                     _hover={{ bgColor: '#EDF2F7' }}
                     onClick={() => {
                       logout();
+                      toast({
+                        position: 'bottom-left',
+                        title: 'You Have Been Signed Out',
+                        description: 'Sign Back in to Post, Sun or Moon',
+                        status: 'warning',
+                        duration: 5000,
+                        isClosable: true,
+                      });
                     }}
                   >
                     Logout
