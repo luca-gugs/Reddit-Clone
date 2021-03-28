@@ -159,12 +159,12 @@ export class PostResolver {
 
     // `);
 
-    const comments = await getConnection().query(`
-    SELECT a.*
-    FROM comment a
-    LEFT OUTER JOIN comment b
-        ON a.id = b.id     
-    `);
+    // const comments = await getConnection().query(`
+    // SELECT a.*
+    // FROM comment a
+    // LEFT OUTER JOIN comment b
+    //     ON a.id = b.id
+    // `);
 
     return {
       posts: posts.slice(0, realLimit),
