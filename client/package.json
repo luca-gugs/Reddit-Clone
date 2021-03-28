@@ -36,7 +36,8 @@
     "react-is": "^16.13.1",
     "react-slick": "^0.28.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat",
-    "urql": "^1.10.0"
+    "urql": "^1.10.0",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.17.7",

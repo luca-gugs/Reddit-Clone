@@ -5,8 +5,6 @@ import { ChangePassForm } from '../../components/Organisms/AuthForms/ChangePassF
 import { Nav } from '../../components/Organisms/Nav';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 
-interface changePasswordProps {}
-
 const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
   return (
     <>

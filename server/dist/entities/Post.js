@@ -84,6 +84,11 @@ __decorate([
     typeorm_1.Column({ default: false }),
     __metadata("design:type", Boolean)
 ], Post.prototype, "anon", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    typeorm_1.Column({ default: false }),
+    __metadata("design:type", Boolean)
+], Post.prototype, "edited", void 0);
 Post = __decorate([
     type_graphql_1.ObjectType(),
     typeorm_1.Entity()

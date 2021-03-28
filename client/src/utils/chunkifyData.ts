@@ -1,5 +1,3 @@
-import { Post } from '../generated/graphql';
-
 export const splitToChunks: any = (flatArray: [], numCols: number) => {
   const newArray = [];
   for (let c = 0; c < numCols; c++) {

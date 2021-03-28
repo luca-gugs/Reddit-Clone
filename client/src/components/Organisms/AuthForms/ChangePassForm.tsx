@@ -1,10 +1,4 @@
-import { Box, Button, Flex, Heading } from '@chakra-ui/core';
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from '@chakra-ui/core';
+import { Alert, AlertIcon, Box, Button, Flex, Heading } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';

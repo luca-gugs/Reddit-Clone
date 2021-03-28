@@ -1,0 +1,3 @@
+mutation addComment($text: String!, $postId: Int!) {
+  addComment(input: { text: $text, postId: $postId })
+}

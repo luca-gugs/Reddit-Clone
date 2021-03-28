@@ -63,4 +63,8 @@ export class Post extends BaseEntity {
   @Field()
   @Column({ default: false })
   anon: Boolean;
+
+  @Field()
+  @Column({ default: false })
+  edited: Boolean;
 }

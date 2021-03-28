@@ -1,10 +1,12 @@
-import { Box, Badge, PseudoBox, Text } from '@chakra-ui/core';
-import { ChevronRightIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { Box, PseudoBox, Text } from '@chakra-ui/core';
+import { ChevronRightIcon, DeleteIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
-
 import React from 'react';
+import { useDeletePostMutation, useMeQuery } from '../../../generated/graphql';
+import { isServer } from '../../../utils/isServer';
 import { DootSection } from '../../Atoms/DootSection';
 import { Link } from '../../Atoms/Link';
+
 interface topicCardProps {
   title: string;
   text: string;
@@ -24,6 +26,11 @@ export const TopicCard: React.FC<topicCardProps> = ({
   points,
   voteStatus,
 }) => {
+  const [, deletePost] = useDeletePostMutation();
+  const [{ data }] = useMeQuery({
+    pause: isServer(),
+  });
+
   return (
     <PseudoBox
       pos='relative'
@@ -84,6 +91,20 @@ export const TopicCard: React.FC<topicCardProps> = ({
           zIndex={2}
         />
       </Link>
+      {data?.me?.id === creator.id && (
+        <IconButton
+          position='absolute'
+          left='2'
+          bottom='2'
+          onClick={() => {
+            deletePost({ id: id });
+          }}
+          icon={<DeleteIcon />}
+          aria-label='delete'
+          transition='transform 0.3s'
+          _hover={{ transform: 'scale(1.2)', cursor: 'pointer' }}
+        />
+      )}
       <DootSection points={points} postId={id} voteStatus={voteStatus} />
     </PseudoBox>
   );

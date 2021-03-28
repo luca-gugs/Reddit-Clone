@@ -1,8 +1,6 @@
+import { Box } from '@chakra-ui/core';
 import React from 'react';
-import NextLink from 'next/link';
-import { Box, Link as ChakraLink } from '@chakra-ui/core';
 import { TopicCard } from './TopicCards';
-import { m } from 'framer-motion';
 interface chunkedPostsProps {
   posts: [];
 }
@@ -21,7 +19,7 @@ export const ChunkedPosts: React.FC<chunkedPostsProps> = ({ posts }) => {
               points: number;
               voteStatus: number | null;
             }) => {
-              return (
+              return !elm ? null : (
                 <TopicCard
                   key={elm.id}
                   title={elm.title}

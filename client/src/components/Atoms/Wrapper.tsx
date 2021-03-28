@@ -1,17 +1,9 @@
-import React from 'react';
 import { Box } from '@chakra-ui/core';
-import { createBreakpoints } from '@chakra-ui/theme-tools';
+import React from 'react';
 
 interface WrapperProps {
   variant?: 'small' | 'large' | 'xl';
 }
-
-const breakpoints = createBreakpoints({
-  sm: '320px',
-  md: '768px',
-  lg: '960px',
-  xl: '1200px',
-});
 
 export const Wrapper: React.FC<WrapperProps> = ({
   children,

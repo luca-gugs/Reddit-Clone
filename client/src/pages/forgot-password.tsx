@@ -1,9 +1,8 @@
-import React from 'react';
-import { RegisterForm } from '../components/Organisms/AuthForms/RegisterForm';
-import { Nav } from '../components/Organisms/Nav';
 import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../utils/createUrqlClient';
+import React from 'react';
 import { ForgotPassForm } from '../components/Organisms/AuthForms/ForgotPassForm';
+import { Nav } from '../components/Organisms/Nav';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 interface forgotPasswordProps {}
 
@@ -27,4 +26,4 @@ const ForgotPassword: React.FC<forgotPasswordProps> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(ForgotPassword);
+export default withUrqlClient(createUrqlClient, { ssr: true })(ForgotPassword);

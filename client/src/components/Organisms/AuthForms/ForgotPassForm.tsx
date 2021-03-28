@@ -1,8 +1,6 @@
 import { Box, Button, Flex, Heading } from '@chakra-ui/core';
 import { Form, Formik } from 'formik';
-import { useRouter } from 'next/router';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useForgotPasswordMutation } from '../../../generated/graphql';
 import { InputField } from '../../Atoms/InputField';
 import { Link } from '../../Atoms/Link';
@@ -20,7 +18,7 @@ export const ForgotPassForm: React.FC<ForgotPassFormProps> = ({}) => {
       </Heading>
       <Formik
         initialValues={{ email: '' }}
-        onSubmit={async (values, { setErrors }) => {
+        onSubmit={async values => {
           await forgotPassword(values);
           setComplete(true);
         }}

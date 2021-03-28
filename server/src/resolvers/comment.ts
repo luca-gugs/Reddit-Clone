@@ -1,25 +1,23 @@
-import { User } from '../entities/User';
 import { MyContext } from 'src/types';
 import {
   Arg,
   Ctx,
   Field,
   InputType,
+  Int,
   Mutation,
   Resolver,
   UseMiddleware,
 } from 'type-graphql';
-import { getConnection, getRepository } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { Comment } from '../entities/Comment';
-
 import { isAuth } from '../middleware/isAuth';
-import { Post } from '../entities/Post';
 
 @InputType()
 class CommentInput {
   @Field()
   text!: string;
-  @Field()
+  @Field(() => Int)
   postId!: number;
   @Field({ nullable: true })
   anon: boolean;
@@ -35,7 +33,6 @@ export class CommentResolver {
     @Arg('input') input: CommentInput,
     @Ctx() { req }: MyContext
   ): Promise<Comment | Error | Boolean> {
-    console.log(req.session.userId);
     await getConnection().transaction(async tm => {
       await tm.query(
         `

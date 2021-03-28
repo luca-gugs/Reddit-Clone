@@ -47,7 +47,9 @@ __decorate([
 ], Comment.prototype, "postId", void 0);
 __decorate([
     type_graphql_1.Field(() => Post_1.Post),
-    typeorm_1.ManyToOne(() => Post_1.Post, post => post.comments),
+    typeorm_1.ManyToOne(() => Post_1.Post, post => post.comments, {
+        onDelete: 'CASCADE',
+    }),
     __metadata("design:type", Post_1.Post)
 ], Comment.prototype, "post", void 0);
 __decorate([

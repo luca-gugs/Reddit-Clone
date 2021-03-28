@@ -3,7 +3,6 @@ import {
   Button,
   Collapse,
   Flex,
-  Checkbox,
   FormLabel,
   useToast,
 } from '@chakra-ui/core';
@@ -22,7 +21,7 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
   const toast = useToast();
   const [show, setShow] = React.useState(false);
   const [, createPost] = useCreatePostMutation();
-  const [{ data, fetching }] = useMeQuery({
+  const [{ data }] = useMeQuery({
     pause: isServer(),
   });
 
@@ -37,7 +36,7 @@ export const CreatePostCollapse: React.FC<CreatePostCollapseProps> = ({}) => {
         <Collapse isOpen={show}>
           <Formik
             initialValues={{ title: '', text: '', anon: false }}
-            onSubmit={async (values, { setErrors }) => {
+            onSubmit={async values => {
               const { error } = await createPost({ input: values });
               if (error) {
                 router.push('/login');

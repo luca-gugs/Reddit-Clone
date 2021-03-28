@@ -1,9 +1,9 @@
-import React from 'react';
-import { RegisterForm } from '../components/Organisms/AuthForms/RegisterForm';
-import { Nav } from '../components/Organisms/Nav';
 import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../utils/createUrqlClient';
+import React from 'react';
+import { TestForm } from '../components/Atoms/TestForm';
 import { CreatePostCollapse } from '../components/Organisms/CreatePostCollapse';
+import { Nav } from '../components/Organisms/Nav';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
 interface testProps {}
 
@@ -19,13 +19,15 @@ const Test: React.FC<testProps> = ({}) => {
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          backgroundColor: 'blue',
         }}
       >
         <h2>Test Page</h2>
-        <CreatePostCollapse />
+        <TestForm />
+        {/* <CreatePostCollapse /> */}
       </div>
     </>
   );
 };
 
-export default withUrqlClient(createUrqlClient)(Test);
+export default withUrqlClient(createUrqlClient, { ssr: true })(Test);

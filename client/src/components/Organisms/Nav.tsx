@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, useToast } from '@chakra-ui/core';
+import { Box, Button, Flex, Heading } from '@chakra-ui/core';
 import { Menu, MenuButton, MenuItem, MenuList } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -10,7 +10,6 @@ interface NavProps {}
 
 export const Nav: React.FC<NavProps> = ({}) => {
   const router = useRouter();
-  const toast = useToast();
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),
   });
@@ -83,16 +82,9 @@ export const Nav: React.FC<NavProps> = ({}) => {
                     p='0.25rem 0.5rem'
                     textAlign='right'
                     _hover={{ bgColor: '#EDF2F7' }}
-                    onClick={() => {
-                      logout();
-                      toast({
-                        position: 'bottom-left',
-                        title: 'You Have Been Signed Out',
-                        description: 'Sign Back in to Post, Sun or Moon',
-                        status: 'warning',
-                        duration: 5000,
-                        isClosable: true,
-                      });
+                    onClick={async () => {
+                      await logout();
+                      router.reload();
                     }}
                   >
                     Logout

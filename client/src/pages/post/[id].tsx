@@ -14,12 +14,11 @@ const Post: React.FC<postProps> = ({}) => {
   const intId =
     typeof router.query.id === 'string' ? parseInt(router.query.id) : -1;
 
-  const [{ data, fetching }] = usePostQuery({
+  const [{ data }] = usePostQuery({
     variables: {
       id: intId,
     },
   });
-  // console.log('data', data?.post?.comments);
   return (
     <div
       style={{
@@ -31,7 +30,10 @@ const Post: React.FC<postProps> = ({}) => {
     >
       <Nav />
       <MainCard post={data?.post?.post} />
-      <CommentSection comments={data?.post?.comments} />
+      <CommentSection
+        comments={data?.post?.comments}
+        id={data?.post?.post.id}
+      />
     </div>
   );
 };

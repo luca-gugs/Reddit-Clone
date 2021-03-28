@@ -8,7 +8,7 @@ export function timeDifference(current: any, previous: any) {
   var elapsed = current - previous;
 
   if (elapsed < msPerMinute) {
-    return Math.round(elapsed / 1000) + ' seconds ago';
+    return 'Just Now';
   } else if (elapsed < msPerHour) {
     return Math.round(elapsed / msPerMinute) + ' minutes ago';
   } else if (elapsed < msPerDay) {

@@ -12,12 +12,12 @@ import { useWindowSize } from '../utils/useWindow';
 interface indexProps {}
 
 const Index: React.FC<indexProps> = ({}) => {
-  const { width, height } = useWindowSize();
+  const { width } = useWindowSize();
   const [variables, setVariables] = useState({
     limit: 16,
     cursor: null as null | string,
   });
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, fetching }, post] = usePostsQuery({
     variables,
   });
 

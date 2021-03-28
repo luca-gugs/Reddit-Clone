@@ -1,10 +1,4 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  Flex,
-  Portal,
-} from '@chakra-ui/core';
+import { Flex } from '@chakra-ui/core';
 import React, { InputHTMLAttributes } from 'react';
 
 type footerProps = InputHTMLAttributes<HTMLInputElement> & {};

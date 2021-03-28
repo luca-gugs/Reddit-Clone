@@ -1,13 +1,9 @@
-import { cacheExchange, Resolver } from '@urql/exchange-graphcache';
-import {
-  dedupExchange,
-  Exchange,
-  fetchExchange,
-  stringifyVariables,
-} from 'urql';
-import { pipe, tap } from 'wonka';
+import { gql } from '@urql/core';
+import { Cache, cacheExchange, Resolver } from '@urql/exchange-graphcache';
+import { dedupExchange, fetchExchange, stringifyVariables } from 'urql';
 import {
   ChangePasswordMutation,
+  DeletePostMutationVariables,
   LoginMutation,
   LogoutMutation,
   MeDocument,
@@ -16,20 +12,18 @@ import {
   VoteMutationVariables,
 } from '../generated/graphql';
 import { betterUpdateQuery } from './betterUpdateQuery';
-import Router from 'next/router';
-import { gql } from '@urql/core';
 import { isServer } from './isServer';
 
-const errorExchange: Exchange = ({ forward }) => ops$ => {
-  return pipe(
-    forward(ops$),
-    tap(({ error }) => {
-      if (error?.message.includes('not authenticated')) {
-        Router.replace('/login');
-      }
-    })
-  );
-};
+// const errorExchange: Exchange = ({ forward }) => ops$ => {
+//   return pipe(
+//     forward(ops$),
+//     tap(({ error }) => {
+//       if (error?.message.includes('not authenticated')) {
+//         Router.replace('/login');
+//       }
+//     })
+//   );
+// };
 
 export const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -59,11 +53,6 @@ export const cursorPagination = (): Resolver => {
       results.push(...data);
     });
 
-    const obj = {
-      hasMore: hasMore,
-      posts: results,
-    };
-
     return {
       __typename: 'PaginatedPosts',
       hasMore: hasMore,
@@ -72,6 +61,14 @@ export const cursorPagination = (): Resolver => {
   };
 };
 
+function invalidateAllPosts(cache: Cache) {
+  const allFields = cache.inspectFields('Query');
+  const fieldInfos = allFields.filter(info => info.fieldName === 'posts');
+  fieldInfos.forEach(fi => {
+    cache.invalidate('Query', 'posts', fi.arguments || {});
+  });
+}
+
 export const createUrqlClient = (ssrExchange: any, ctx: any) => {
   let cookie = '';
 
@@ -79,7 +76,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
     cookie = ctx.req.headers.cookie;
   }
   return {
-    url: 'http://localhost:4000/graphql',
+    url: process.env.NEXT_PUBLIC_API_URL as string,
     fetchOptions: {
       credentials: 'include' as const,
       headers: cookie ? { cookie } : undefined,
@@ -99,8 +96,6 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
           Mutation: {
             vote: (_result, args, cache, info) => {
               const { postId, value } = args as VoteMutationVariables;
-              console.log(value, 'value');
-
               const data = cache.readFragment(
                 gql`
                   fragment _ on Post {
@@ -111,7 +106,6 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                 `,
                 { id: postId }
               );
-              console.log(data, 'vote data');
 
               if (data) {
                 if (data.voteStatus === value) {
@@ -153,14 +147,24 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
                   }
                 }
               );
+              invalidateAllPosts(cache);
             },
             createPost: (_result, args, cache, info) => {
+              invalidateAllPosts(cache);
+            },
+            deletePost: (_result, args, cache, info) => {
+              cache.invalidate({
+                __typename: 'Post',
+                id: (args as DeletePostMutationVariables).id,
+              });
+            },
+            addComment: (_result, args, cache, info) => {
               const allFields = cache.inspectFields('Query');
               const fieldInfos = allFields.filter(
-                info => info.fieldName === 'posts'
+                info => info.fieldName === 'post'
               );
               fieldInfos.forEach(fi => {
-                cache.invalidate('Query', 'posts', fi.arguments || {});
+                cache.invalidate('Query', 'post', fi.arguments || {});
               });
             },
             changePassword: (_result, args, cache, info) => {
