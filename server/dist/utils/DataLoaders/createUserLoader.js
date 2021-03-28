@@ -24,7 +24,6 @@ const createUserLoader = () => new dataloader_1.default((userIds) => __awaiter(v
         }
     });
     const sortedUsers = userIds.map(userId => userIdToUser[userId]);
-    console.log('SortedUsers: ', sortedUsers);
     return sortedUsers;
 }));
 exports.createUserLoader = createUserLoader;

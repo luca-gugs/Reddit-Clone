@@ -13,7 +13,6 @@ exports.sendEmail = void 0;
 const nodemailer = require('nodemailer');
 function sendEmail(to, html) {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log('EMAIL: ', process.env.NODEMAILER_EMAIL);
         let transporter = nodemailer.createTransport({
             name: 'example.com',
             host: 'smtp.ethereal.email',

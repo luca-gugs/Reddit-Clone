@@ -21,7 +21,6 @@ const createUpdootLoader = () => new dataloader_1.default((keys) => __awaiter(vo
     updoots.forEach(updoot => {
         updootIdsToUpdoot[`${updoot.userId}|${updoot.postId}`] = updoot;
     });
-    console.log(updoots, 'uds');
     return keys.map(key => updootIdsToUpdoot[`${key.userId}|${key.postId}`]);
 }));
 exports.createUpdootLoader = createUpdootLoader;
