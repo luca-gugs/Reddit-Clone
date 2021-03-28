@@ -13,6 +13,7 @@ export const Nav: React.FC<NavProps> = ({}) => {
   const [{ data, fetching }] = useMeQuery({
     pause: isServer(),
   });
+
   const [, logout] = useLogoutMutation();
 
   let body = null;

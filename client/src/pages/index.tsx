@@ -8,6 +8,7 @@ import { usePostsQuery } from '../generated/graphql';
 import { splitToChunks } from '../utils/chunkifyData';
 import { createUrqlClient } from '../utils/createUrqlClient';
 import { useWindowSize } from '../utils/useWindow';
+import { isServer } from '../utils/isServer';
 
 interface indexProps {}
 
@@ -19,6 +20,7 @@ const Index: React.FC<indexProps> = ({}) => {
   });
   const [{ data, fetching }, post] = usePostsQuery({
     variables,
+    pause: isServer(),
   });
 
   const [postData, setPostData] = useState([]);
