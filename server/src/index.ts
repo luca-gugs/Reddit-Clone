@@ -1,26 +1,31 @@
 import { ApolloServer } from 'apollo-server-express';
-import 'dotenv-safe/config';
-import 'reflect-metadata';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
+import 'dotenv-safe/config';
 import express from 'express';
 import session from 'express-session';
+import http from 'http';
 import Redis from 'ioredis';
 import path from 'path';
 import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import { createConnection } from 'typeorm';
-import { COOKIE_NAME, __prod__ } from './constants';
+import { COOKIE_NAME } from './constants';
+import { Comment } from './entities/Comment';
+import { Message } from './entities/Message';
 import { Post } from './entities/Post';
+import { Room, RoomMember } from './entities/Room';
 import { Updoot } from './entities/Updoot';
 import { User } from './entities/User';
-import { Comment } from './entities/Comment';
-import { HelloResolver } from './resolvers/hello';
-import { PostResolver } from './resolvers/post';
-import { UserResolver } from './resolvers/user';
 import { CommentResolver } from './resolvers/comment';
-import { createUserLoader } from './utils/DataLoaders/createUserLoader';
+import { HelloResolver } from './resolvers/hello';
+import { MessageResolver } from './resolvers/message';
+import { PostResolver } from './resolvers/post';
+import { RoomResolver } from './resolvers/room';
+import { UserResolver } from './resolvers/user';
 import { createUpdootLoader } from './utils/DataLoaders/createUpdootLoader';
+import { createUserLoader } from './utils/DataLoaders/createUserLoader';
+
 require('dotenv').config();
 
 const main = async () => {
@@ -28,14 +33,15 @@ const main = async () => {
     type: 'postgres',
     url: process.env.DATABASE_URL,
     logging: true,
-    // synchronize: true,
+    synchronize: true,
     migrations: [path.join(__dirname, './migrations/*')],
-    entities: [Post, User, Updoot, Comment],
+    entities: [Post, User, Updoot, Comment, Room, RoomMember, Message],
   });
   await conn.runMigrations();
   // await Post.delete({});
 
   const app = express();
+  const httpServer = http.createServer(app);
 
   const RedisStore = connectRedis(session);
   const redis = new Redis(process.env.REDIS_URL);
@@ -72,7 +78,14 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, PostResolver, UserResolver, CommentResolver],
+      resolvers: [
+        HelloResolver,
+        UserResolver,
+        PostResolver,
+        CommentResolver,
+        RoomResolver,
+        MessageResolver,
+      ],
       validate: false,
     }),
     context: ({ req, res }) => ({
@@ -82,6 +95,15 @@ const main = async () => {
       userLoader: createUserLoader(),
       updootLoader: createUpdootLoader(),
     }),
+    subscriptions: {
+      path: '/subscriptions',
+      onConnect: () => {
+        console.log('Client connected for subscriptions');
+      },
+      onDisconnect: () => {
+        console.log('Client disconnected from subscriptions');
+      },
+    },
   });
 
   apolloServer.applyMiddleware({
@@ -89,8 +111,13 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(parseInt(process.env.PORT), () => {
+  apolloServer.installSubscriptionHandlers(httpServer);
+
+  httpServer.listen(parseInt(process.env.PORT), () => {
     console.log('server started on localhost:4000');
+    console.log(
+      `Subscriptions ready at ws://localhost:${process.env.PORT}${apolloServer.subscriptionsPath}`
+    );
   });
 };
 

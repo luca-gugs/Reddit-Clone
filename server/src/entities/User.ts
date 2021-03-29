@@ -8,9 +8,11 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Post } from './Post';
-import { Updoot } from './Updoot';
 import { Comment } from './Comment';
+import { Message } from './Message';
+import { Post } from './Post';
+import { Room, RoomMember } from './Room';
+import { Updoot } from './Updoot';
 
 @ObjectType()
 @Entity()
@@ -34,11 +36,24 @@ export class User extends BaseEntity {
   @OneToMany(() => Post, post => post.creator)
   posts: Post[];
 
+  @OneToMany(() => Room, room => room.creator)
+  rooms: Room[];
+
+  @OneToMany(() => RoomMember, roomMember => roomMember.user)
+  roomAsMember: RoomMember[];
+
   @OneToMany(() => Updoot, updoot => updoot.user)
   updoots: Updoot[];
 
+  @OneToMany(() => Message, message => message.creator)
+  messages: Message[];
+
   @OneToMany(() => Comment, comment => comment.creator)
   comments: Comment[];
+
+  // @Field(() => User)
+  // @ManyToOne(() => Room, room => room.members)
+  // member: User;
 
   @Field(() => String)
   @CreateDateColumn()
